@@ -14,6 +14,7 @@ export class TableRenderer {
 
   public renderCell(reference: CellReference): void {
     const cell = this.tableComponent.root.getCell(reference);
+    console.log(cell, this.ctx, this.canvas)
   }
 
 

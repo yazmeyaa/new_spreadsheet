@@ -17,7 +17,7 @@ const ADDRESS_SYMBOLS = {
 export function getCellReference(
   address: string
 ): CellReference | null | never {
-  const addressRegex = /^([a-zA-Z\s\d]+\!)?([a-zA-Z]+)(\d+)$/;
+  const addressRegex = /^([a-zA-Z\s\d]+!)?([a-zA-Z]+)(\d+)$/;
   const isAddressValid = addressRegex.test(address);
 
   if (!isAddressValid) {
@@ -67,11 +67,11 @@ export function convertLettersToDigits(string: string): number {
 export function getCellAddress(cellReference: CellReference): string {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  let sheetName = cellReference.sheetName
+  const sheetName = cellReference.sheetName
     ? cellReference.sheetName + ADDRESS_SYMBOLS.sheetName
     : "";
   let colIndex = cellReference.col;
-  let rowIndex = cellReference.row + 1;
+  const rowIndex = cellReference.row + 1;
 
   let colAddress = "";
   while (colIndex >= 0) {

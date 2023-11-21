@@ -11,7 +11,15 @@ import {
   removeSheetNameFromAddress,
 } from "../helpers";
 import { EventManager } from "./events";
-import { CellChangeEvent, CellChangeEventConstructorProps } from "./events/cell_change";
+import {
+  CellChangeEvent,
+  CellChangeEventConstructorProps,
+} from "./events/cell_change";
+import { CellStyleConstructorProps } from "./sheet/styles";
+import {
+  CellStyleChangeEvent,
+  CellStyleChangeEventConstructorProps,
+} from "./events/style_change";
 
 export class Spreadsheet {
   public element: HTMLElement;
@@ -59,11 +67,10 @@ export class Spreadsheet {
 
     if (!reference)
       throw new Error("Cannot get reference by address: " + address);
-    let sheet = this.sheets.getSheet(reference.sheetName);
+    const sheet = this.sheets.getSheet(reference.sheetName);
     if (!sheet) {
       throw new Error("Cannot find sheet with name " + reference.sheetName);
     }
-
 
     const value = sheet.getCell(address) ?? null;
     const styles = sheet.styles.getStyles(address) ?? null;
@@ -92,28 +99,70 @@ export class Spreadsheet {
     } else return null;
   }
 
-  public setCellValue(address: string, value: string, dispatch: boolean = true): string | null {
+  public setCellValue(
+    address: string,
+    value: string,
+    dispatch: boolean = true
+  ): string | null {
     const cellReference = getCellReference(address);
-    if(!cellReference) {
+    if (!cellReference) {
+      console.error("Wrong address format: " + address);
       return null;
     }
 
     const sheet = this.sheets.getSheet(cellReference.sheetName);
-    if(!sheet) return null;
+    if (!sheet) {
+      console.error(
+        "Cannot get sheet with name or id: " + cellReference.sheetName
+      );
+      return null;
+    }
 
     const addressWithoutSheetname = removeSheetNameFromAddress(address);
     sheet.data.setValue(addressWithoutSheetname, value);
 
-    if(dispatch) {
+    if (dispatch) {
       const eventProperties: CellChangeEventConstructorProps = {
         address,
-        newValue: value
-      }
+        newValue: value,
+      };
       const event = new CellChangeEvent(this, eventProperties);
-      this.events.dispatch('cell_change', event);
+      this.events.dispatch("table_resize", event);
     }
-    
+
     return value;
+  }
+
+  public setCellStyles(
+    address: string,
+    styles: CellStyleConstructorProps,
+    dispatch: boolean = true
+  ): void {
+    const cellReference = getCellReference(address);
+    if (!cellReference) {
+      console.error("Wrong address format: " + address);
+      return;
+    }
+
+    const sheet = this.sheets.getSheet(cellReference.sheetName);
+    if (!sheet) {
+      console.error(
+        "Cannot get sheet with name or id: " + cellReference.sheetName
+      );
+      return;
+    }
+    const addressWithoutSheetname = removeSheetNameFromAddress(address);
+    sheet.styles.setStyles(addressWithoutSheetname, styles);
+    const newStyles = sheet.styles.getStyles(addressWithoutSheetname);
+
+    if (dispatch) {
+      const eventProps: CellStyleChangeEventConstructorProps = {
+        address,
+        styles: newStyles,
+      };
+      const event = new CellStyleChangeEvent(this, eventProps);
+      this.events.dispatch("cell_styles_change", event);
+    }
   }
 
   public destroy(): void {
