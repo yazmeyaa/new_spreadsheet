@@ -23,15 +23,39 @@ import {
 
 export class Spreadsheet {
   public element: HTMLElement;
-  public sheets: SheetList = new SheetList();
   public readonly components = {
     toolbar: new Toolbar(this),
     table: new Table(this),
   } as const;
   public readonly events = new EventManager();
+  public sheets: SheetList = new SheetList(this);
 
   constructor() {
     this.element = this.buildTable();
+    this.normalizeTableSizes();
+    this.setup();
+  }
+
+  private normalizeTableSizes(): void {
+    this.components.table.normalizeTableSizes.bind(this.components.table);
+  }
+
+  private setup(): void {
+    this.setupListeners();
+    window.requestAnimationFrame(
+      this.components.table.normalizeTableSizes.bind(this.components.table)
+    );
+  }
+
+  private setupListeners(): void {
+    this.events.addEventListener("active_sheet_change", () => {
+      const sheet = this.sheets.activeSheet;
+      if (!sheet) return;
+      this.components.table.setScrollerSizeToSheetSizes(sheet, {
+        columnsToRender: 100,
+        rowsToRender: 100,
+      });
+    });
   }
 
   private buildTable(): HTMLElement {

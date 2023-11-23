@@ -42,10 +42,20 @@ spreadsheet.events.addEventListener("cell_change", (event) => {
 spreadsheet.setCellValue("Sheet 1!A1", "First change");
 spreadsheet.setCellValue("Sheet 1!A2", "Second change");
 spreadsheet.setCellValue("Sheet 1!HILTER1488", "Third change");
-spreadsheet.events.addEventListener('cell_styles_change', (event) => {
+spreadsheet.events.addEventListener("cell_styles_change", (event) => {
   console.log(event);
-})
+});
 
 spreadsheet.setCellStyles("Sheet 1!A1", {
-  textColor: 'red'
-})
+  textColor: "red",
+});
+
+spreadsheet.sheets.activeSheet?.properties.setRow(1, {
+  height: 24,
+});
+
+spreadsheet.sheets.activeSheet?.properties.setColumn(2, {
+  width: 50,
+});
+
+

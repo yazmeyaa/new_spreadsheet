@@ -1,4 +1,5 @@
 import { Spreadsheet } from "..";
+import { ActiveSheetChangeEvent } from "./active_sheet_change";
 import { CellChangeEvent } from "./cell_change";
 import { CellStyleChangeEvent } from "./style_change";
 import { TableResizeEvent } from "./table_resize";
@@ -24,6 +25,7 @@ type EventTypeMap = {
   cell_change: CellChangeEvent;
   cell_styles_change: CellStyleChangeEvent;
   table_resize: TableResizeEvent;
+  active_sheet_change: ActiveSheetChangeEvent;
 };
 type EventName = keyof EventTypeMap;
 type EventValue = EventTypeMap[EventName];
@@ -43,6 +45,7 @@ export class EventManager {
     cell_change: [],
     table_resize: [],
     cell_styles_change: [],
+    active_sheet_change: [],
   };
 
   //? constructor(root: Spreadsheet) {

@@ -1,9 +1,11 @@
+import { Spreadsheet } from "..";
 import {
   getCellAddress,
   getRandomId,
   removeSheetNameFromAddress,
 } from "../../helpers";
 import { CellReference } from "../cell";
+import { ActiveSheetChangeEvent } from "../events/active_sheet_change";
 import { SheetData, SheetDataType } from "./data";
 import { SheetProperties } from "./properties";
 import { SheetStyles } from "./styles";
@@ -83,6 +85,11 @@ export class Sheet {
 export class SheetList {
   private sheets: Map<string, Sheet> = new Map();
   private _activeSheet: Sheet | null = null;
+  private spreadsheet: Spreadsheet;
+
+  constructor(spreadsheet: Spreadsheet) {
+    this.spreadsheet = spreadsheet;
+  }
 
   public get activeSheet(): Sheet | null {
     return this._activeSheet;
@@ -149,15 +156,23 @@ export class SheetList {
     return sheet;
   }
 
+  private dispatchChangeActiveSheet(sheet: Sheet): void {
+    const event = new ActiveSheetChangeEvent(this.spreadsheet, sheet);
+    this.spreadsheet.events.dispatch('active_sheet_change', event);
+  }
+
   public setActiveSheet(sheet: Sheet): Sheet;
   public setActiveSheet(id: string): Sheet | null;
   public setActiveSheet(sheetOrId: string | Sheet): Sheet | null {
     if (sheetOrId instanceof Sheet) {
       this._activeSheet = sheetOrId;
+      this.dispatchChangeActiveSheet(this._activeSheet);
       return sheetOrId;
     } else {
       const sheet = this.sheets.get(sheetOrId);
       if (!sheet) return null;
+      this._activeSheet = sheet;
+      this.dispatchChangeActiveSheet(sheet);
       return sheet;
     }
   }

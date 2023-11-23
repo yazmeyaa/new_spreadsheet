@@ -8,6 +8,7 @@ $css_prefix: "sc_";
 }
 .#{$css_prefix}spreadsheet_table {
   position: relative;
+  isolation: isolate;
   width: 100%;
   height: 100%;
 }
@@ -19,6 +20,8 @@ $css_prefix: "sc_";
   overflow: scroll;
   box-sizing: border-box;
   transform: translateZ(0);
+  top: 0px;
+  left: 0px;
 
   &:focus {
     outline: none;

@@ -51,6 +51,8 @@ export class Row {
 export class SheetProperties {
   private columns: Map<number, Column> = new Map();
   private rows: Map<number, Row> = new Map();
+  public readonly DEFAULT_ROW_SIZE = defaultRowProps.height;
+  public readonly DEFAULT_COLUMN_SIZE = defaultColumnProps.width;
 
   public getRow(rowIdx: number): Row {
     const row = this.rows.get(rowIdx);
@@ -64,7 +66,7 @@ export class SheetProperties {
     else return column;
   }
 
-  setRow(rowIdx: number, props?: RowConstructorProps): Row {
+  public setRow(rowIdx: number, props?: RowConstructorProps): Row {
     if (this.rows.has(rowIdx) === false) {
       const row = new Row(props);
       this.rows.set(rowIdx, row);
@@ -76,7 +78,7 @@ export class SheetProperties {
     }
   }
 
-  setColumn(colIdx: number, props?: ColumnsConstructorProps): Column {
+  public setColumn(colIdx: number, props?: ColumnsConstructorProps): Column {
     if (this.rows.has(colIdx) === false) {
       const column = new Column(props);
       this.columns.set(colIdx, column);
@@ -86,5 +88,21 @@ export class SheetProperties {
       column.setProperties(props);
       return column;
     }
+  }
+
+  public getAllRows(): Row[] {
+    return Array.from(this.rows.values());
+  }
+
+  public getAllRowsKeys(): number[] {
+    return Array.from(this.rows.keys());
+  }
+
+  public getAllColumnsKeys(): number[] {
+    return Array.from(this.columns.keys());
+  }
+
+  public getAllColumns(): Column[] {
+    return Array.from(this.columns.values());
   }
 }

@@ -1,11 +1,11 @@
 import { CSS_PREFIX } from "../../main";
-// import { Table } from "./table";
+import { Table } from "./table";
 
 export class CanvasComponent {
-    // private table: Table;
+    private table: Table;
     public element: HTMLCanvasElement;
-    constructor(/*table: Table*/) {
-        // this.table = table;
+    constructor(table: Table) {
+        this.table = table;
         this.element = this.createElement();
     }
 
