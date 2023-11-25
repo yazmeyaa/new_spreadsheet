@@ -26,6 +26,7 @@ export interface CellStyleConstructorProps {
   textSize?: number;
   textStyle?: TextStyle;
   border?: CellBorder;
+  borderColor?: string
 }
 
 type StylePropsKeys = keyof CellStyleConstructorProps;
@@ -36,6 +37,7 @@ export class CellStyle {
   public textSize: number;
   public textStyle: TextStyle;
   public border: CellBorder;
+  public borderColor: string
 
   constructor(props?: CellStyleConstructorProps) {
     this.textColor = this.getProperty("textColor", props?.textColor);
@@ -46,6 +48,7 @@ export class CellStyle {
     this.textSize = this.getProperty("textSize", props?.textSize);
     this.textStyle = this.getProperty("textStyle", props?.textStyle);
     this.border = this.getProperty("border", props?.border);
+    this.borderColor = this.getProperty("borderColor", props?.borderColor)
   }
   private getProperty<
     K extends StylePropsKeys,
@@ -109,6 +112,7 @@ function createDefaultCellStyles(): Required<CellStyleConstructorProps> {
     },
     textSize: 12,
     border: createDefaultBorderStyles(),
+    borderColor: 'black'
   };
 
   return defaultCellStyles;

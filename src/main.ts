@@ -50,12 +50,28 @@ spreadsheet.setCellStyles("Sheet 1!A1", {
   textColor: "red",
 });
 
-spreadsheet.sheets.activeSheet?.properties.setRow(1, {
-  height: 24,
-});
+const msArray: number[] = [];
+const coordsArray: Array<{ x: number; y: number }> = [];
 
-spreadsheet.sheets.activeSheet?.properties.setColumn(2, {
-  width: 50,
-});
+for (let i = 0; i < 1000; i++) {
+  const start = performance.now();
+  const cellCoords = spreadsheet.components.table.getCellCoords({
+    col: i,
+    row: i,
+    sheetName: sheet.name,
+  });
+  const end = performance.now();
+  coordsArray.push(cellCoords);
+  msArray.push(end - start);
+}
 
+let sum = 0;
+msArray.forEach(function (num) {
+  sum += num;
+});
+const average = sum / msArray.length;
+
+console.log(`Getter work for ${average} ms!`);
+console.log(msArray);
+console.log(coordsArray);
 

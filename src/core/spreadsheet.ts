@@ -20,6 +20,7 @@ import {
   CellStyleChangeEvent,
   CellStyleChangeEventConstructorProps,
 } from "./events/style_change";
+import { TableResizeEvent } from "./events/table_resize";
 
 export class Spreadsheet {
   public element: HTMLElement;
@@ -29,15 +30,18 @@ export class Spreadsheet {
   } as const;
   public readonly events = new EventManager();
   public sheets: SheetList = new SheetList(this);
+  private resizeObserver: ResizeObserver;
 
   constructor() {
     this.element = this.buildTable();
     this.normalizeTableSizes();
     this.setup();
+    this.resizeObserver = new ResizeObserver(this.handleResize.bind(this));
+    this.resizeObserver.observe(this.element);
   }
 
   private normalizeTableSizes(): void {
-    this.components.table.normalizeTableSizes.bind(this.components.table);
+    this.components.table.normalizeTableSizes();
   }
 
   private setup(): void {
@@ -45,6 +49,11 @@ export class Spreadsheet {
     window.requestAnimationFrame(
       this.components.table.normalizeTableSizes.bind(this.components.table)
     );
+  }
+
+  private handleResize(): void {
+    const event = new TableResizeEvent(this);
+    this.events.dispatch("table_resize", event);
   }
 
   private setupListeners(): void {
@@ -55,6 +64,11 @@ export class Spreadsheet {
         columnsToRender: 100,
         rowsToRender: 100,
       });
+    });
+
+    this.events.addEventListener("table_resize", () => {
+      this.normalizeTableSizes();
+      this.components.table.drawGrid({columns: 40, rows: 40});
     });
   }
 
@@ -98,8 +112,10 @@ export class Spreadsheet {
 
     const value = sheet.getCell(address) ?? null;
     const styles = sheet.styles.getStyles(address) ?? null;
+    const width = sheet.properties.getColumn(reference.row).width
+    const height = sheet.properties.getRow(reference.col).height;
 
-    const cellProps: CellConstructorProps = { value, styles, reference };
+    const cellProps: CellConstructorProps = { value, styles, reference, width, height };
     return new Cell(cellProps);
   }
 
@@ -194,7 +210,6 @@ export class Spreadsheet {
   }
 
   public mount(target: HTMLElement): HTMLElement {
-    console.log(target);
     target.appendChild(this.element);
     return this.element;
   }

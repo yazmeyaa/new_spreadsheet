@@ -1,4 +1,5 @@
 import { Component, Sheet, Spreadsheet } from "../../core";
+import { CellReference } from "../../core/cell";
 import { TableRenderer } from "../../core/table_renderer";
 import { CSS_PREFIX } from "../../main";
 import { CanvasComponent } from "./canvas";
@@ -36,6 +37,19 @@ export class Table extends Component {
       borderSize * 2;
     const sizes = { width, height };
     this.scrollerComponent.setElementSizes(sizes);
+    this.canvasComponent.setCanvasSizes(sizes)
+  }
+
+  public getCellCoords(cell: CellReference): { x: number; y: number } {
+    return this.renderer.getCellCoords(cell);
+  }
+
+  public renderCell(reference: CellReference): void {
+    this.renderer.renderCell(reference);
+  }
+
+  public drawGrid(dimensions: {rows: number, columns: number}): void {
+    this.renderer.drawGrid(dimensions);
   }
 
   public setScrollerSizeToSheetSizes(
@@ -56,8 +70,8 @@ export class Table extends Component {
     tableElement.classList.add(`${CSS_PREFIX}spreadsheet_table`);
 
     const canvasElement = this.canvasComponent.element;
-    tableElement.appendChild(scrollerElement);
     tableElement.appendChild(canvasElement);
+    tableElement.appendChild(scrollerElement);
     return tableElement;
   }
 

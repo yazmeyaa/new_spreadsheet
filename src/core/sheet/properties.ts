@@ -1,9 +1,9 @@
 const defaultRowProps: Required<RowConstructorProps> = {
-  height: 14,
+  height: 25,
 } as const;
 
 const defaultColumnProps: Required<ColumnsConstructorProps> = {
-  width: 14,
+  width: 100,
 } as const;
 
 export interface ColumnsConstructorProps {
@@ -23,7 +23,9 @@ export class Column {
   }
 
   public setProperties(props?: ColumnsConstructorProps): void {
-    if (props) Object.assign(this, props);
+    if (props) {
+      if(props.width) this._width = props.width
+    }
   }
 }
 
@@ -44,7 +46,9 @@ export class Row {
   }
 
   public setProperties(props?: RowConstructorProps): void {
-    if (props) Object.assign(this, props);
+    if (props) {
+      if(props.height) this._height = props.height
+    }
   }
 }
 
@@ -79,7 +83,7 @@ export class SheetProperties {
   }
 
   public setColumn(colIdx: number, props?: ColumnsConstructorProps): Column {
-    if (this.rows.has(colIdx) === false) {
+    if (this.columns.has(colIdx) === false) {
       const column = new Column(props);
       this.columns.set(colIdx, column);
       return column;

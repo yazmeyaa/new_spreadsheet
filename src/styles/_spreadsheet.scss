@@ -5,7 +5,7 @@ $css_prefix: "sc_";
   border: 2px solid black;
   width: 100%;
   min-height: 200px;
-}
+} 
 .#{$css_prefix}spreadsheet_table {
   position: relative;
   isolation: isolate;
@@ -30,6 +30,13 @@ $css_prefix: "sc_";
 
 .#{$css_prefix}spreadsheet_canvas {
   position: absolute;
-  height: 100%;
-  width: 100%;
+  contain: strict;
+  display: block;
+  overflow-clip-margin: content-box;
+  overflow: clip;
+}
+
+.#{$css_prefix}spreadsheet_toolbar {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
